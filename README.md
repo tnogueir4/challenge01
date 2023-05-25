@@ -111,6 +111,35 @@ module "eks" {
 
 <br/>
 
+**MODULO NGINX-CONTROLLER**
+
+Módulo utilizado para implantar nginx-ingress-controller, responsável por receber o tráfego externo e encaminhar para os serviços apropriados com base nas configurações definidas.
+
+Exemplo de uso:
+
+```
+module "nginx-controller" {
+  source  = "terraform-iaac/nginx-controller/helm"
+
+  additional_set = [
+    {
+      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+      value = "nlb"
+      type  = "string"
+    },
+    {
+      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-cross-zone-load-balancing-enabled"
+      value = "true"
+      type  = "string"
+    }
+  ]
+}
+
+```
+<p> Este módulo possui um total de <b>21 inputs</b>, <b>3 outputs</b> e <b> 1 resource</b>. A lista completa pode ser verificada na documentação do <a href="https://registry.terraform.io/modules/terraform-iaac/nginx-controller/helm/latest">módulo nginx-controller</a>.</p>
+
+<br/>
+
 ### **<a name="providers">Providers</a>**
 
 <p>Um provider (provedor) no Terraform é um componente que permite ao Terraform interagir com um determinado serviço e/ou plataforma de infraestrutura. Ele age como uma ponte entre o Terraform e o serviço alvo, permitindo a criação, atualização e remoção de recursos nesse serviço específico. </p>
