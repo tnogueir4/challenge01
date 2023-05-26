@@ -1,0 +1,110 @@
+---
+- name: Preparing Workstation
+  hosts: localhost
+  connection: local
+  tasks:
+
+    - name: Installing Linux Apps
+      become: true
+      apt:
+        name: '{{ item }}'
+        install_recommends: yes
+        state: present
+      loop:
+          - vim
+          - curl
+          - wget
+          - ncdu
+          - tree
+          - apt-transport-https
+          - ca-certificates
+          - python3-pip
+          - git
+          - unzip
+
+    - name: Installing AWS CLI via pip3
+      become: true
+      pip:
+        name: awscli
+        executable: pip3
+
+    - block:
+      - name: Installing Terraform 1.3.9
+        become: true
+        unarchive:
+          src: 'https://releases.hashicorp.com/terraform/1.3.9/terraform_1.3.9_linux_amd64.zip'
+          dest: /usr/local/bin
+          remote_src: yes
+
+    - block: 
+      - name: Install Docker Key
+        become: true
+        apt_key:
+          url: 'https://download.docker.com/linux/ubuntu/gpg'
+          state: present
+      - name: Install Docker Repository
+        become: true
+        apt_repository:
+          repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
+          state: present
+          filename: docker-ce
+      - name: Install Docker
+        become: true
+        apt:
+          name: docker-ce
+      - name: Adding existing user to group Docker
+        become: yes
+        user: 
+          name: '{{ ansible_user_id }}'
+          groups: docker 
+          append: yes
+      - name: Install Docker-Compose
+        become: true
+        get_url:
+          url: 'https://github.com/docker/compose/releases/download/1.26.2/docker-compose-Linux-x86_64'
+          dest: '/usr/local/bin/docker-compose'
+          mode: 755
+        
+    - block:
+      - name: Installing Kubectl 1.22.0
+        become: true
+        get_url:    
+          url: 'https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl'
+          dest: /usr/local/bin/kubectl
+          mode: 755
+      - name: Downloading Kubectx and Kubens 
+        become: true
+        git:
+          repo: 'https://github.com/ahmetb/kubectx'
+          dest: /opt/kubectx 
+      - name: Creating Symlink to kubectx and kubens 
+        become: true
+        file:
+          src: '/opt/kubectx/{{ item }}'
+          dest: '/usr/local/bin/{{ item }}'
+          state: link
+        with_items:
+          - kubectx
+          - kubens  
+          
+    - block:
+      - name: Adding Helm repository
+        become: true
+        apt_repository:
+          repo: "deb [trusted=yes] https://baltocdn.com/helm/stable/debian/ all main"
+          state: present
+      - name: Update APT cache
+        become: true
+        apt:
+          update_cache: yes
+      - name: Install Helm
+        become: true
+        apt:
+          name: helm
+          state: latest
+      - name: Verify helm version
+        command: helm version
+        register: helm_version
+      - name: View helm version installed
+        debug:
+          msg: "{{ helm_version.stdout }}"
