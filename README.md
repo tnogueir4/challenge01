@@ -6,6 +6,7 @@
  - [Cluster AWS EKS](#cluster)
     - [Módulos](#modulos)
     - [Providers](#providers)
+    - [Terraform Manifests](#tfManifests)
 
 
 <!--te-->
@@ -152,3 +153,18 @@ module "nginx-controller" {
 | `hashicorp/random` | `~> 3.4.3` | Provider específico para gerar valores aleatórios ou pseudoaleatórios durante o processo de implantação da infraestrutura. |
 | `hashicorp/tls` | `~> 4.0.4` | Provider para funcionalidades relacionadas à segurança, criptografia e certificados TLS (Transport Layer Security). |
 | `hashicorp/cloudinit` | `~>2.2.0` | Provider que permite a definição de metadados na configuração inicial de instâncias de vm's. |
+
+<br/>
+
+### **<a name="tfManifests">Terraform Manifests</a>**
+
+<p>Terraform manifests ou manifestos de terraform, são arquivos de configuração que possuem a extensão <b>'.tf'</b> e contêm a definição da infraestrutura como código (Infrastructure as Code) para provisionar e gerenciar recursos na nuvem.</p>
+
+<p>Os manifestos para o projeto <b>Challenge01</b> estão localizados em <b>./infra/eks/</b> e possuem a seguinte descrição:</p>
+
+| Manifesto | Descrição |
+|---|---|
+| `./infra/eks/main.tf` | Arquivo principal do projeto. Através dele efetuamos as chamadas aos módulos e definimos os inputs de cada resource. |
+| `./infra/eks/outputs` | Arquivo para definição de saídas (outputs) que deseja expor após a criação dos recursos. |
+| `./infra/eks/providers` | Neste arquivo definimos os providers que serão utilizados pelo Terraform para criar, atualizar e remover recursos. |
+| `./infra/eks/variables` | Aqui definimos as variáveis de entrada que serão utilizadas no projeto. | 
