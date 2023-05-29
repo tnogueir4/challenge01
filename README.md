@@ -3,10 +3,12 @@
 
 <!--ts-->
  - [Sobre](#sobre)
+ - [Dependências](#dependencias)
  - [Cluster AWS EKS](#cluster)
     - [Módulos](#modulos)
     - [Providers](#providers)
     - [Terraform Manifests](#tfManifests)
+    - [Criar o cluster EKS - Passo a passo](#createCluster)
 
 
 <!--te-->
@@ -24,6 +26,53 @@ Challenge01 é um projeto de desafio técnico que visa a criação de um ambient
  * Configurar o acesso externo à aplicação usando um LoadBalancer ou ingress.
  * Criar uma estratégia de HPA.
  * Criar uma pipeline de CI/CD (de sua preferência desde que seja como código) que permita que uma aplicação seja implantada automaticamente no cluster Kubernetes quando houver uma atualização em um repositório GIT.
+
+<br/>
+
+## <a name="dependencias">Dependências</a>
+
+<p>Durante a descrição do projeto <b>Challenge01</b>, será informado as dependências para que o projeto possa ser executado corretamente. As dependências se referem ao ferramental utilizado para a criação do projeto.</p>
+
+<p>Visando facilitar a instalação das ferramentas, criamos um playbook que já efetua a instalação e configuração inicial dessas ferramentas. A playbook foi criada para ser executada em workstations que utilizem distribuições linux baseadas em Debian. </p>
+
+`` ATENÇÃO: Para esse projeto, se faz necessário que você possua um par de chaves de uso programático (ACCESS_KEY e SECRET_KEY) com permissões administrativas para o provisionamento dos recursos na nuvem. A forma de disponibilização desses acessos varia de empresa para empresa, por isso esse assunto não será abordado nesta documentação.``
+
+<br/>
+<p>Para utilizarmos o playbook, vamos precisar instalar o ansible e também o git para efetuarmos o clone do repositório.</p>
+
+Atualize seu repositório apt:
+
+```
+$ sudo apt update
+```
+
+<br/>
+Efetue a instalação do ansible e do git:
+
+```
+$ sudo apt install ansible git -y
+```
+
+<br/>
+Clone o repositório git em sua workstation:
+
+```
+$ git clone git@github.com:tnogueir4/challenge01.git
+```
+
+<br/>
+Navegue até o diretório tools/utilities:
+
+```
+$ cd challenge01/tools/utilities
+```
+
+<br/>
+Execute a playbook e aguarde a finalização:
+
+```
+$ ansible-playbook configure_workstation.yml
+```
 
 <br/>
 
@@ -165,6 +214,10 @@ module "nginx-controller" {
 | Manifesto | Descrição |
 |---|---|
 | `./infra/eks/main.tf` | Arquivo principal do projeto. Através dele efetuamos as chamadas aos módulos e definimos os inputs de cada resource. |
-| `./infra/eks/outputs` | Arquivo para definição de saídas (outputs) que deseja expor após a criação dos recursos. |
-| `./infra/eks/providers` | Neste arquivo definimos os providers que serão utilizados pelo Terraform para criar, atualizar e remover recursos. |
-| `./infra/eks/variables` | Aqui definimos as variáveis de entrada que serão utilizadas no projeto. | 
+| `./infra/eks/outputs.tf` | Arquivo para definição de saídas (outputs) que deseja expor após a criação dos recursos. |
+| `./infra/eks/providers.tf` | Neste arquivo definimos os providers que serão utilizados pelo Terraform para criar, atualizar e remover recursos. |
+| `./infra/eks/variables.tf` | Aqui definimos as variáveis de entrada que serão utilizadas no projeto. | 
+
+<br/>
+
+### **<a name="createCluster">Criar o cluster EKS - Passo a passo</a>**
