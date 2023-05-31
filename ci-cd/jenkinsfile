@@ -1,0 +1,51 @@
+pipeline {
+
+  environment {
+    dockerimagename = "tnogueir4/challenge01"
+    dockerImage = ""
+  }
+
+  agent any
+
+  stages {
+
+    stage('Checkout Source') {
+      steps {
+        git 'https://github.com/tnogueir4/challenge01.git'
+      }
+    }
+
+    stage('Build image') {
+      steps{
+        script {
+          sh 'cd backend/src/'
+          dockerImage = docker.build dockerimagename
+        }
+      }
+    }
+
+    stage('Pushing Image') {
+      environment {
+               registryCredential = 'dockerhub-cred'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
+        }
+      }
+    }
+
+    stage('Deploying flask container to Kubernetes') {
+      steps {
+        script {
+            sh 'cd helm-charts/'
+            sh ' helm upgrade --install flask-app flask-app/ -n webapps'
+        }
+      }
+    }
+
+  }
+
+}
